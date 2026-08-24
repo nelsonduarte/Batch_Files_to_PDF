@@ -1,0 +1,53 @@
+name: CodeQL
+
+# Static security analysis. This is the "advanced setup" form rather than the
+# one-click default setup, so the configuration lives in the repository and is
+# reviewable like any other file.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly, so a newly published CodeQL query finds old code too. Without this
+    # the analysis only ever sees commits, never new knowledge about them.
+    - cron: "27 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      # The only place in this repository that needs write access, and it is
+      # write to the security tab, not to the code.
+      security-events: write
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # "actions" scans the workflow files themselves -- pinning and token
+        # scoping are exactly the sort of thing it checks.
+        language: [python, actions]
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@c16c0f3f2812ec4bb3750a5ed64873fe2ce0fbef # v4.31.5
+        with:
+          language: ${{ matrix.language }}
+          # security-and-quality is a wider suite than the default: it adds
+          # maintainability queries on top of the security ones.
+          queries: security-and-quality
+
+      - name: Analyse
+        uses: github/codeql-action/analyze@c16c0f3f2812ec4bb3750a5ed64873fe2ce0fbef # v4.31.5
+        with:
+          category: /language:${{ matrix.language }}
