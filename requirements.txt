@@ -1,0 +1,25 @@
+# Dependencies for files_to_pdf
+#
+# Every Python dependency here is OPTIONAL: each one unlocks an engine, and
+# the tool runs with whichever ones it finds. Run `python files_to_pdf.py`
+# and pick "Show detected engines" to see what is active.
+#
+#     python -m pip install -r requirements.txt
+#
+# pywin32   -> the Word engine, Windows only. It provides both modules that
+#              engines/word.py imports (win32com.client and pythoncom), which
+#              is why neither appears here by name. The environment marker
+#              makes it a no-op on Linux and macOS.
+# Pillow    -> the image engine (jpg, png, gif, bmp, tiff, webp, ico).
+#              Without it images fall back to LibreOffice, which rescales them
+#              onto a Draw page instead of keeping them as they are.
+# pillow-heif -> adds .heic/.heif to the image engine (iPhone photos).
+#
+# LibreOffice is NOT installable from PyPI, and it is what handles most
+# formats: spreadsheets, presentations, web pages, plain text, source code,
+# e-books and vector drawings. Install it from your package manager or from
+# https://www.libreoffice.org/download/ and make sure `soffice` is reachable.
+
+pywin32>=306; sys_platform == "win32"
+Pillow>=9.0
+pillow-heif>=0.10; python_version >= "3.8"

@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Least privilege: nothing here needs to write to the repository. This overrides
+# any wider default, so a compromised dependency cannot push commits or releases.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the floor the code targets; 3.13 guards against drift.
+        python-version: ["3.10", "3.13"]
+
+    steps:
+      # Actions are pinned to commit SHAs, not tags: a tag can be moved to point
+      # at different code, a SHA cannot.
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the image engine's dependencies
+        # pywin32 is Windows-only and LibreOffice is not on the runner, so the
+        # tests that need them skip themselves. Pillow is what the image engine
+        # tests actually exercise.
+        run: python -m pip install --disable-pip-version-check Pillow
+
+      - name: Byte-compile every module
+        run: python -m compileall -q cli.py converter.py formats.py jobs.py menu.py files_to_pdf.py engines/
+
+      - name: Run the test suite
+        run: python -m unittest discover -s tests -v
+
+      - name: Check the CLI starts and reports its formats
+        run: |
+          python files_to_pdf.py --help
+          python -c "import formats; print(f'{len(formats.SUPPORTED_SUFFIXES)} extensions accepted')"
+
+      - name: Convert a real image end to end
+        # The one engine that works without an office suite, so it gets a true
+        # end-to-end run rather than only unit tests.
+        run: |
+          python -c "
+          from PIL import Image
+          Image.new('RGB', (800, 600), 'teal').save('sample.png')
+          "
+          python files_to_pdf.py sample.png -o out
+          python -c "
+          import sys, pathlib
+          pdf = pathlib.Path('out/sample.pdf')
+          assert pdf.is_file(), 'no PDF was produced'
+          assert pdf.read_bytes().startswith(b'%PDF'), 'the output is not a PDF'
+          print(f'ok: {pdf} ({pdf.stat().st_size} bytes)')
+          "

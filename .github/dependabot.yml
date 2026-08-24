@@ -1,0 +1,22 @@
+version: 2
+
+updates:
+  # The three optional Python dependencies: pywin32, Pillow, pillow-heif.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+
+  # The workflows above pin their actions to commit SHAs, which means nothing
+  # updates them on its own. Dependabot is what keeps those pins current --
+  # without this block, pinning would quietly turn into going stale.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
