@@ -417,3 +417,11 @@ disambiguation, case-sensitive names (`Report.docx` and `report.docx` side by
 side), `~` expansion and the non-interactive fallbacks all behaved as on Windows.
 
 **macOS** — the `soffice` lookup path is implemented but has not been exercised.
+
+## License
+
+MIT — see [LICENSE](LICENSE). Use it, change it, ship it; just keep the notice.
+
+The office suites this tool drives are separate programs under their own terms:
+LibreOffice is MPL-2.0, Microsoft Word needs its own licence from Microsoft.
+Neither is bundled here — the tool only calls whichever one you already have.
