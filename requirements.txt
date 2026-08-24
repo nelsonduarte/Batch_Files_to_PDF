@@ -22,4 +22,4 @@
 
 pywin32>=312; sys_platform == "win32"
 Pillow>=9.0
-pillow-heif>=0.10; python_version >= "3.8"
+pillow-heif>=1.5.0; python_version >= "3.8"
