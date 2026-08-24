@@ -21,5 +21,5 @@
 # https://www.libreoffice.org/download/ and make sure `soffice` is reachable.
 
 pywin32>=306; sys_platform == "win32"
-Pillow>=9.0
+Pillow>=12.3.0
 pillow-heif>=0.10; python_version >= "3.8"
