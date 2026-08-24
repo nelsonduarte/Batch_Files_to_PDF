@@ -20,6 +20,6 @@
 # e-books and vector drawings. Install it from your package manager or from
 # https://www.libreoffice.org/download/ and make sure `soffice` is reachable.
 
-pywin32>=306; sys_platform == "win32"
+pywin32>=312; sys_platform == "win32"
 Pillow>=9.0
 pillow-heif>=0.10; python_version >= "3.8"
