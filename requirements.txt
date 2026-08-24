@@ -15,11 +15,17 @@
 #              onto a Draw page instead of keeping them as they are.
 # pillow-heif -> adds .heic/.heif to the image engine (iPhone photos).
 #
+# The version floors are deliberately high rather than "whatever still works".
+# This tool opens files from wherever you point it, and Pillow parses those
+# image files itself -- a floor of >=9.0 would let an old, long-patched Pillow
+# satisfy the requirement on a machine that already had one. Dependabot and a
+# pip-audit step in CI keep these current.
+#
 # LibreOffice is NOT installable from PyPI, and it is what handles most
 # formats: spreadsheets, presentations, web pages, plain text, source code,
 # e-books and vector drawings. Install it from your package manager or from
 # https://www.libreoffice.org/download/ and make sure `soffice` is reachable.
 
 pywin32>=312; sys_platform == "win32"
-Pillow>=9.0
-pillow-heif>=1.5.0; python_version >= "3.8"
+Pillow>=12.3.0
+pillow-heif>=1.5.0
